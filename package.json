@@ -1,0 +1,31 @@
+{
+  "name": "vtoroy-kanon-reels",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion reels for @vtoroy.kanon medical archive project",
+  "scripts": {
+    "dev": "remotion studio",
+    "typecheck": "tsc --noEmit",
+    "stills": "node scripts/render-stills.mjs",
+    "narration": "node --experimental-strip-types scripts/write-narration.mjs",
+    "fonts": "node scripts/build-font-css.mjs",
+    "render:reel": "remotion render AvicennaSinusNodeReel output/vtoroy-kanon-sinus-node-reel.mp4 --codec=h264 --pixel-format=yuv420p --crf=17"
+  },
+  "overrides": {
+    "electron-to-chromium": "1.5.420"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.520",
+    "@remotion/cli": "^4.0.520",
+    "@remotion/renderer": "^4.0.520",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.520"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "typescript": "^5.9.3"
+  }
+}
