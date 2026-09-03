@@ -1,18 +1,27 @@
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, staticFile, useCurrentFrame} from 'remotion';
 import {colors} from '../styles/theme';
+
+const NOISE_TILE = 160;
 
 /**
  * Фон кадра: глубокий графит, мягкая виньетка и лёгкое плёночное зерно.
- * Зерно детерминировано: seed зависит только от номера кадра.
+ *
+ * Зерно — заранее сгенерированный тайл (scripts/build-noise.mjs), а не
+ * фильтр feTurbulence: полнокадровый SVG-фильтр пересчитывался на каждом
+ * кадре и в headless-рендере стоил больше, чем вся остальная сцена.
+ * Смещение тайла зависит только от номера кадра, поэтому зерно «живое»,
+ * но результат остаётся покадрово воспроизводимым.
  */
 export const Backdrop: React.FC<{
   /** Смещение оттенка фона: 0 — нейтральный графит, 1 — чуть теплее. */
   warmth?: number;
 }> = ({warmth = 0}) => {
   const frame = useCurrentFrame();
-  // Зерно обновляется каждые 3 кадра — «плёночная», а не мерцающая фактура.
-  const seed = Math.floor(frame / 3) % 7;
+  // Тайл сдвигается раз в два кадра — плёночная, а не мерцающая фактура.
+  const step = Math.floor(frame / 2);
+  const offsetX = (step * 37) % NOISE_TILE;
+  const offsetY = (step * 53) % NOISE_TILE;
 
   return (
     <AbsoluteFill style={{backgroundColor: colors.ink}}>
@@ -31,21 +40,15 @@ export const Backdrop: React.FC<{
         }}
       />
       {/* Зерно */}
-      <AbsoluteFill style={{opacity: 0.075, mixBlendMode: 'overlay'}}>
-        <svg width="100%" height="100%" viewBox="0 0 540 960" preserveAspectRatio="none">
-          <filter id={`grain-${seed}`} x="0" y="0" width="100%" height="100%">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.9"
-              numOctaves={3}
-              seed={seed}
-              stitchTiles="stitch"
-            />
-            <feColorMatrix type="saturate" values="0" />
-          </filter>
-          <rect width="540" height="960" filter={`url(#grain-${seed})`} />
-        </svg>
-      </AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          backgroundImage: `url(${staticFile('assets/noise.png')})`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: `${NOISE_TILE}px ${NOISE_TILE}px`,
+          backgroundPosition: `${offsetX}px ${offsetY}px`,
+          opacity: 0.055,
+        }}
+      />
     </AbsoluteFill>
   );
 };

@@ -9,7 +9,8 @@
     "stills": "node scripts/render-stills.mjs",
     "narration": "node --experimental-strip-types scripts/write-narration.mjs",
     "fonts": "node scripts/build-font-css.mjs",
-    "render:reel": "remotion render AvicennaSinusNodeReel output/vtoroy-kanon-sinus-node-reel.mp4 --codec=h264 --pixel-format=yuv420p --crf=17"
+    "render:reel": "remotion render AvicennaSinusNodeReel output/vtoroy-kanon-sinus-node-reel.mp4 --codec=h264 --pixel-format=yuv420p --crf=17",
+    "noise": "node scripts/build-noise.mjs"
   },
   "overrides": {
     "electron-to-chromium": "1.5.420"
